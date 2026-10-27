@@ -28,6 +28,11 @@ public class StudentController {
         return studentService.getAllStudents();
     }
 
+    @GetMapping("/by-last-name")
+    public List<Student> getByLastName(@RequestParam String lastName) {
+        return studentService.getStudentsByLastName(lastName);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable UUID id) {
         Optional<Student> found = studentService.getStudentById(id);

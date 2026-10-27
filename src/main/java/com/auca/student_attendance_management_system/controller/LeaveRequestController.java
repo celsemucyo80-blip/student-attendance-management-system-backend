@@ -1,11 +1,13 @@
 package com.auca.student_attendance_management_system.controller;
 
 import com.auca.student_attendance_management_system.model.LeaveRequest;
+import com.auca.student_attendance_management_system.model.LeaveStatus;
 import com.auca.student_attendance_management_system.service.LeaveRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -26,6 +28,18 @@ public class LeaveRequestController {
     @GetMapping("/all")
     public List<LeaveRequest> getAll() {
         return leaveRequestService.getAllLeaveRequests();
+    }
+
+    @GetMapping("/by-status")
+    public List<LeaveRequest> getByStatus(@RequestParam LeaveStatus status) {
+        return leaveRequestService.getLeaveRequestsByStatus(status);
+    }
+
+    @GetMapping("/between")
+    public List<LeaveRequest> getBetween(@RequestParam String start, @RequestParam String end) {
+        LocalDate startDate = LocalDate.parse(start);
+        LocalDate endDate = LocalDate.parse(end);
+        return leaveRequestService.getLeaveRequestsBetween(startDate, endDate);
     }
 
     @GetMapping("/{id}")
