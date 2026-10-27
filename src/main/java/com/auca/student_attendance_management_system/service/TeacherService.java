@@ -50,4 +50,8 @@ public class TeacherService {
         teacherRepository.deleteById(id);
         return "Teacher deleted successfully";
     }
+
+    public List<Teacher> getTeachersBySubject(String name) {
+        return teacherRepository.findTeachersBySubjectName(name);
+    }
 }

@@ -33,6 +33,16 @@ public class StudentController {
         return studentService.getStudentsByLastName(lastName);
     }
 
+    @GetMapping("/of-teacher/{teacherId}")
+    public ResponseEntity<?> getOfTeacher(@PathVariable UUID teacherId) {
+        Optional<List<Student>> found = studentService.getStudentsOfTeacher(teacherId);
+        if (found.isPresent()) {
+            return new ResponseEntity<>(found.get(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("The teacher with that id does not exist", HttpStatus.NOT_FOUND);
+        }
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable UUID id) {
         Optional<Student> found = studentService.getStudentById(id);

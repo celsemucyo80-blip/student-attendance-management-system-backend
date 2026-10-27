@@ -28,6 +28,11 @@ public class TeacherController {
         return teacherService.getAllTeachers();
     }
 
+    @GetMapping("/by-subject")
+    public List<Teacher> getBySubject(@RequestParam String name) {
+        return teacherService.getTeachersBySubject(name);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable UUID id) {
         Optional<Teacher> found = teacherService.getTeacherById(id);

@@ -2,6 +2,7 @@ package com.auca.student_attendance_management_system.service;
 
 import com.auca.student_attendance_management_system.model.Student;
 import com.auca.student_attendance_management_system.repository.StudentRepository;
+import com.auca.student_attendance_management_system.repository.TeacherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -13,6 +14,9 @@ public class StudentService {
 
     @Autowired
     private StudentRepository studentRepository;
+
+    @Autowired
+    private TeacherRepository teacherRepository;
 
     public String saveStudent(Student student) {
         studentRepository.save(student);
@@ -52,5 +56,12 @@ public class StudentService {
 
     public List<Student> getStudentsByLastName(String lastName) {
         return studentRepository.findByLastNameIgnoreCaseOrderByFirstNameAsc(lastName);
+    }
+
+    public Optional<List<Student>> getStudentsOfTeacher(UUID teacherId) {
+        if (!teacherRepository.existsById(teacherId)) {
+            return Optional.empty();
+        }
+        return Optional.of(studentRepository.findStudentsOfTeacher(teacherId));
     }
 }

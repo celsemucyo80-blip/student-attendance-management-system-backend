@@ -28,6 +28,11 @@ public class ClassroomController {
         return classroomService.getAllClassrooms();
     }
 
+    @GetMapping("/free")
+    public List<Classroom> getFree() {
+        return classroomService.getFreeClassrooms();
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable UUID id) {
         Optional<Classroom> found = classroomService.getClassroomById(id);

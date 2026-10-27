@@ -28,6 +28,11 @@ public class SubjectController {
         return subjectService.getAllSubjects();
     }
 
+    @GetMapping("/unused")
+    public List<Subject> getUnused() {
+        return subjectService.getUnusedSubjects();
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable UUID id) {
         Optional<Subject> found = subjectService.getSubjectById(id);
