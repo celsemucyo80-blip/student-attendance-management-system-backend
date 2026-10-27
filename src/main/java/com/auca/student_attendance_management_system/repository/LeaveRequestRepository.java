@@ -12,4 +12,6 @@ public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, UUID
     List<LeaveRequest> findByStatusOrderByLeaveDateAsc(LeaveStatus status);
 
     List<LeaveRequest> findByLeaveDateBetweenOrderByLeaveDateAsc(LocalDate start, LocalDate end);
+
+    boolean existsByTeacherIdAndLeaveDateAndStatusNot(UUID teacherId, LocalDate leaveDate, LeaveStatus status);
 }

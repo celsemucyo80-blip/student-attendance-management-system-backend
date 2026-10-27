@@ -17,6 +17,17 @@ public class LeaveRequestService {
     private LeaveRequestRepository leaveRequestRepository;
 
     public String saveLeaveRequest(LeaveRequest leaveRequest) {
+        if (leaveRequest.getLeaveDate().isBefore(LocalDate.now())) {
+            return "Leave request date cannot be in the past";
+        }
+        if (leaveRequest.getTeacher() != null) {
+            boolean busy = leaveRequestRepository.existsByTeacherIdAndLeaveDateAndStatusNot(
+                    leaveRequest.getTeacher().getId(), leaveRequest.getLeaveDate(), LeaveStatus.DENIED);
+            if (busy) {
+                return "Teacher already handles a leave request on that date";
+            }
+        }
+        leaveRequest.setStatus(LeaveStatus.REQUESTED);
         leaveRequestRepository.save(leaveRequest);
         return "Leave request saved successfully";
     }
@@ -61,5 +72,32 @@ public class LeaveRequestService {
 
     public List<LeaveRequest> getLeaveRequestsBetween(LocalDate start, LocalDate end) {
         return leaveRequestRepository.findByLeaveDateBetweenOrderByLeaveDateAsc(start, end);
+    }
+
+    public String updateStatus(UUID id, LeaveStatus newStatus) {
+        Optional<LeaveRequest> found = leaveRequestRepository.findById(id);
+        if (found.isEmpty()) {
+            return "The leave request with that id does not exist";
+        }
+        LeaveRequest leaveRequest = found.get();
+        LeaveStatus current = leaveRequest.getStatus();
+
+        boolean allowed = false;
+        if (current == LeaveStatus.REQUESTED) {
+            if (newStatus == LeaveStatus.REVIEWED || newStatus == LeaveStatus.DENIED) {
+                allowed = true;
+            }
+        } else if (current == LeaveStatus.REVIEWED) {
+            if (newStatus == LeaveStatus.GRANTED || newStatus == LeaveStatus.DENIED) {
+                allowed = true;
+            }
+        }
+
+        if (!allowed) {
+            return "Cannot change status from " + current + " to " + newStatus;
+        }
+        leaveRequest.setStatus(newStatus);
+        leaveRequestRepository.save(leaveRequest);
+        return "Leave request status updated successfully";
     }
 }

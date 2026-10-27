@@ -22,7 +22,13 @@ public class LeaveRequestController {
     @PostMapping("/save")
     public ResponseEntity<String> save(@RequestBody LeaveRequest leaveRequest) {
         String message = leaveRequestService.saveLeaveRequest(leaveRequest);
-        return new ResponseEntity<>(message, HttpStatus.CREATED);
+        if (message.equals("Leave request date cannot be in the past")) {
+            return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+        } else if (message.equals("Teacher already handles a leave request on that date")) {
+            return new ResponseEntity<>(message, HttpStatus.CONFLICT);
+        } else {
+            return new ResponseEntity<>(message, HttpStatus.CREATED);
+        }
     }
 
     @GetMapping("/all")
@@ -40,6 +46,18 @@ public class LeaveRequestController {
         LocalDate startDate = LocalDate.parse(start);
         LocalDate endDate = LocalDate.parse(end);
         return leaveRequestService.getLeaveRequestsBetween(startDate, endDate);
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<String> updateStatus(@PathVariable UUID id, @RequestParam LeaveStatus status) {
+        String message = leaveRequestService.updateStatus(id, status);
+        if (message.equals("The leave request with that id does not exist")) {
+            return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+        } else if (message.startsWith("Cannot change status")) {
+            return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+        } else {
+            return new ResponseEntity<>(message, HttpStatus.OK);
+        }
     }
 
     @GetMapping("/{id}")

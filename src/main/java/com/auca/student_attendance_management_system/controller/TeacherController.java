@@ -33,6 +33,32 @@ public class TeacherController {
         return teacherService.getTeachersBySubject(name);
     }
 
+    @PutMapping("/{teacherId}/subjects/{subjectId}")
+    public ResponseEntity<String> addSubject(@PathVariable UUID teacherId, @PathVariable UUID subjectId) {
+        String message = teacherService.addSubjectToTeacher(teacherId, subjectId);
+        if (message.equals("The teacher with that id does not exist")
+                || message.equals("That subject does not exist")) {
+            return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+        } else if (message.equals("The teacher already has that subject")) {
+            return new ResponseEntity<>(message, HttpStatus.CONFLICT);
+        } else {
+            return new ResponseEntity<>(message, HttpStatus.OK);
+        }
+    }
+
+    @PatchMapping("/{teacherId}/classroom")
+    public ResponseEntity<String> changeClassroom(@PathVariable UUID teacherId, @RequestParam int roomNumber) {
+        String message = teacherService.changeClassroom(teacherId, roomNumber);
+        if (message.equals("The teacher with that id does not exist")
+                || message.equals("The classroom with that roomNumber does not exist")) {
+            return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+        } else if (message.equals("That classroom is taken by another teacher")) {
+            return new ResponseEntity<>(message, HttpStatus.CONFLICT);
+        } else {
+            return new ResponseEntity<>(message, HttpStatus.OK);
+        }
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable UUID id) {
         Optional<Teacher> found = teacherService.getTeacherById(id);
