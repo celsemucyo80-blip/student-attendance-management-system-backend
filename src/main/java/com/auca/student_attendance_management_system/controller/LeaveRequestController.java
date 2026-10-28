@@ -85,6 +85,8 @@ public class LeaveRequestController {
         String message = leaveRequestService.deleteLeaveRequest(id);
         if (message.equals("The leave request with that id does not exist")) {
             return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+        } else if (message.equals("That leave request has catch-up tasks, delete them first")) {
+            return new ResponseEntity<>(message, HttpStatus.CONFLICT);
         } else {
             return new ResponseEntity<>(message, HttpStatus.OK);
         }

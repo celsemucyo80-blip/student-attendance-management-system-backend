@@ -2,6 +2,7 @@ package com.auca.student_attendance_management_system.service;
 
 import com.auca.student_attendance_management_system.model.LeaveRequest;
 import com.auca.student_attendance_management_system.model.LeaveStatus;
+import com.auca.student_attendance_management_system.repository.CatchUpTaskRepository;
 import com.auca.student_attendance_management_system.repository.LeaveRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,9 @@ public class LeaveRequestService {
 
     @Autowired
     private LeaveRequestRepository leaveRequestRepository;
+
+    @Autowired
+    private CatchUpTaskRepository catchUpTaskRepository;
 
     public String saveLeaveRequest(LeaveRequest leaveRequest) {
         if (leaveRequest.getLeaveDate().isBefore(LocalDate.now())) {
@@ -59,8 +63,12 @@ public class LeaveRequestService {
     }
 
     public String deleteLeaveRequest(UUID id) {
-        if (!leaveRequestRepository.existsById(id)) {
+        Optional<LeaveRequest> found = leaveRequestRepository.findById(id);
+        if (found.isEmpty()) {
             return "The leave request with that id does not exist";
+        }
+        if (catchUpTaskRepository.existsByLeaveRequest(found.get())) {
+            return "That leave request has catch-up tasks, delete them first";
         }
         leaveRequestRepository.deleteById(id);
         return "Leave request deleted successfully";
