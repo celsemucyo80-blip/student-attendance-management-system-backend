@@ -48,6 +48,18 @@ public class LeaveRequestController {
         return leaveRequestService.getLeaveRequestsBetween(startDate, endDate);
     }
 
+    @GetMapping("/stats/by-status")
+    public List<Object[]> getStatsByStatus() {
+        return leaveRequestService.getStatusStats();
+    }
+
+    @PatchMapping("/cancel-day")
+    public ResponseEntity<String> cancelDay(@RequestParam UUID teacherId, @RequestParam String date) {
+        LocalDate day = LocalDate.parse(date);
+        String message = leaveRequestService.cancelDay(teacherId, day);
+        return new ResponseEntity<>(message, HttpStatus.OK);
+    }
+
     @PatchMapping("/{id}/status")
     public ResponseEntity<String> updateStatus(@PathVariable UUID id, @RequestParam LeaveStatus status) {
         String message = leaveRequestService.updateStatus(id, status);

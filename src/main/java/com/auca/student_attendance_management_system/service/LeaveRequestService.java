@@ -6,6 +6,7 @@ import com.auca.student_attendance_management_system.repository.CatchUpTaskRepos
 import com.auca.student_attendance_management_system.repository.LeaveRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -107,5 +108,15 @@ public class LeaveRequestService {
         leaveRequest.setStatus(newStatus);
         leaveRequestRepository.save(leaveRequest);
         return "Leave request status updated successfully";
+    }
+
+    public List<Object[]> getStatusStats() {
+        return leaveRequestRepository.getStatusStats();
+    }
+
+    @Transactional
+    public String cancelDay(UUID teacherId, LocalDate date) {
+        int count = leaveRequestRepository.cancelDay(teacherId, date, LeaveStatus.DENIED, LeaveStatus.GRANTED);
+        return count + " leave requests cancelled";
     }
 }
