@@ -18,6 +18,10 @@ public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, UUID
 
     boolean existsByTeacherIdAndLeaveDateAndStatusNot(UUID teacherId, LocalDate leaveDate, LeaveStatus status);
 
+    long countByLeaveDate(LocalDate leaveDate);
+
+    long countByStatus(LeaveStatus status);
+
     @Query("SELECT lr.status, COUNT(lr) FROM LeaveRequest lr GROUP BY lr.status")
     List<Object[]> getStatusStats();
 

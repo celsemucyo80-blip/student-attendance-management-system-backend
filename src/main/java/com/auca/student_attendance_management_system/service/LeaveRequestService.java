@@ -7,6 +7,8 @@ import com.auca.student_attendance_management_system.repository.LeaveRequestRepo
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -118,5 +120,8 @@ public class LeaveRequestService {
     public String cancelDay(UUID teacherId, LocalDate date) {
         int count = leaveRequestRepository.cancelDay(teacherId, date, LeaveStatus.DENIED, LeaveStatus.GRANTED);
         return count + " leave requests cancelled";
+    }
+        public Page<LeaveRequest> getLeaveRequestsPage(Pageable pageable) {
+        return leaveRequestRepository.findAll(pageable);
     }
 }
